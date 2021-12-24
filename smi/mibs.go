@@ -8,6 +8,7 @@ package smi
 
 import (
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"os"
@@ -26,6 +27,7 @@ type MIB struct {
 	Debug     bool
 	dirs      []string
 	loadOrder []string
+	filesys   fs.FS
 }
 
 type parentRef struct {
@@ -46,9 +48,10 @@ var replacementModule = map[string]string{
 // NewMIB creates a MIB object for the modules contained in the dirs directories.
 // Creating a MIB does not load any modules from the directories. You need to call
 // LoadModules() on the resulting MIB object.
-func NewMIB(dirs ...string) *MIB {
+func NewMIB(filesys fs.FS, dirs ...string) *MIB {
 	mib := &MIB{
 		dirs:    dirs,
+		filesys: filesys,
 		Modules: make(map[string]*Module),
 		Symbols: make(map[string]*Symbol),
 	}
